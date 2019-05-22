@@ -1,0 +1,31 @@
+#當啟動類選擇的是手動輸入啟動端口的時候，需要把這裡注釋掉。否則要放開下面的注釋，切記！
+#server:
+#  port: 8080
+spring:
+  application:
+    name: ek-provider
+eureka:
+  instance:
+    #下面是需要給服務調用者提供一個通用的元數據，既然是通用的，那麼可以配置在這裡，格式如下（注意是key/value形式的）
+    #元數據，就是表的字段名的意思
+    metadata-map:
+      companyName : dark, bright
+      userName : dsb
+  #下面是過期設置，就是告訴eureka服務端，如果30秒沒有收到“我”（ek-provider）發送的心跳，那麼就認為ek-provider已掛
+  #那麼請eureka服務端將ek-provider從其服務列表中剔除。其他服務也再也不能發現ek-provider了。
+    lease-expiration-duration-in-seconds: 30
+    #每5秒進行一次心跳檢測，這個是由服務提供者向eureka註冊，後續由eureka定時發起對服務提供者的心跳檢測
+    #上一個是老大對小弟的最大容忍時長，這個是小弟多久匯報一次
+    lease-renewal-interval-in-seconds: 5
+  client: 
+    #當前屬性的作用是，讓eureka服務端每隔幾秒檢查一下當前服務提供者的狀態，并修改eureka服務端的相關信息（比如頁面展示什麼的）
+    #對應的是HealthCheckHandler類中的getStatus方法
+    instance-info-replication-interval-seconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+#敏感端口控制，當值為false的時候，所有敏感端口都可以訪問了。
+endpoints:
+  sensitive: false
+logging:
+  level: 
+    com.netflix: DEBUG
